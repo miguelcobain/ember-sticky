@@ -1,0 +1,39 @@
+<div class="scrollable">
+	<div class="header">
+  	I'm a normal header.
+  </div>
+
+  {{#sticky-element enabled=secondaryEnabled class="secondary-header" as |isSticky|}}
+  	I am
+    {{#if isSticky}}
+    	sticky. Scroll up.
+    {{else}}
+    	not sticky. Scroll down.
+    {{/if}}
+  {{/sticky-element}}
+  {{#sticky-element enabled=tertiaryEnabled class="tertiary-header" as |isSticky|}}
+  	I am
+    {{#if isSticky}}
+    	sticky. Scroll up.
+    {{else}}
+    	not sticky. Scroll down.
+    {{/if}}
+  {{/sticky-element}}
+
+  <div class="body">
+    <p>
+      <button onclick={{action "toggleSecondary"}}>Toggle secondary header stickyness</button>
+      <button onclick={{action "toggleTertiary"}}>Toggle tertiary header stickyness</button>
+    </p>
+
+  	Lorem ipsum dolor sit amet, semper atomorum eum ex, vis mazim laoreet debitis in. In pri dico volutpat. Quem esse quas nec no, et nam nostro adolescens. Ut eam graeco volumus, at vim tale inani, no pri discere lobortis.
+
+    At solum singulis est. Amet accusam eleifend et eam. Cu primis hendrerit his, ut sit graeco semper, ne nam expetenda gloriatur. Augue audiam gubergren et duo, cum eirmod ornatus urbanitas te, est epicuri vituperatoribus an. Vis an tempor salutandi, sed an magna inermis percipit.
+
+    Pro inermis nusquam erroribus ut, aliquip pertinacia eu est, eu cum iudico democritum. At quo alienum sensibus, ex dico esse justo eum. Cu vel prima inciderint appellantur, ad usu habeo pertinax scriptorem, ius et magna percipit. Ut quo quot patrioque sententiae, eum tacimates salutandi ut. Agam maiorum imperdiet quo ut, his oratio singulis ei, te est dicam imperdiet. Ne habemus forensibus deterruisset vim, at sea tamquam meliore.
+
+    Cum ludus principes in, eam no unum modus alienum. Inani honestatis inciderint quo eu, ei usu minim officiis, ei cotidieque disputationi interpretaris pri. Adhuc affert no his, usu et tation referrentur. Et doctus omittantur sea, eam etiam melius eu, dicunt appareat scriptorem in mea. Ius clita fierent ne, te est accusata concludaturque. Omnium sapientem sea cu. Ut falli nostro audire vis, vix persius appellantur ei.
+
+    An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
+  </div>
+</div>
