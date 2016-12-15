@@ -34,8 +34,10 @@ export default Mixin.create({
     if (!canUseDOM) {
       return;
     }
-
-    this._bindListeners();
+    
+    if (this.get('enabled')) {
+      this._bindListeners();
+    }
   },
 
   didUpdateAttrs() {
