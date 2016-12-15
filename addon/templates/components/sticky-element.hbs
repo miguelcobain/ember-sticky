@@ -1,6 +1,6 @@
 <div id="sticky-wrapper-{{uniqueId}}" class="sticky-wrapper">
-  <div style={{wrapperHeightStyle}}>
-    <div id="sticky-content-wrapper-{{uniqueId}}" class="sticky-content-wrapper {{if isSticky stickyClass}} {{class}}" style={{translateStyle}}>
+  <div id="sticky-height-wrapper-{{uniqueId}}">
+    <div id="sticky-content-wrapper-{{uniqueId}}" class="sticky-content-wrapper {{class}}">
       {{yield isSticky}}
     </div>
   </div>

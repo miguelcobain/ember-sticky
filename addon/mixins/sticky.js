@@ -2,28 +2,22 @@ import Ember from 'ember';
 import canUseDOM from 'ember-sticky/utils/can-use-dom';
 import canUseRaf from 'ember-sticky/utils/can-use-raf';
 import isInViewport from 'ember-sticky/utils/is-in-viewport';
+import SCROLLBAR_WIDTH from 'ember-sticky/utils/scrollbar-width';
 
-const { Mixin, computed, String: { htmlSafe }, run, guidFor, $ } = Ember;
+const { Mixin, guidFor, $ } = Ember;
 
-const rAFIDS = {};
 const events = ['scroll', 'resize'];
+
+const TICK = 17;
+const raf = canUseRaf() ? requestAnimationFrame : (fn) => {
+  setTimeout(fn, TICK);
+};
 
 export default Mixin.create({
 
   enabled: true,
   stickyClass: 'sticky',
-
-  translateStyle: computed('isSticky', 'scrollTop', function() {
-    let scrollTop = this.get('scrollTop');
-    let offsetTop = this.get('offsets.top') || 0;
-    let isSticky = this.get('isSticky');
-    return isSticky && !!scrollTop ? htmlSafe(`transform: translateY(${scrollTop + offsetTop}px);`) : null;
-  }),
-
-  wrapperHeightStyle: computed('wrapperHeight', function() {
-    let wrapperHeight = this.get('wrapperHeight');
-    return wrapperHeight ? htmlSafe(`height: ${wrapperHeight}px;`) : null;
-  }),
+  classNames: ['sticky-wrapper'],
 
   init() {
     this._super(...arguments);
@@ -37,30 +31,21 @@ export default Mixin.create({
     }
 
     if (this.get('enabled')) {
+      this._setElements();
+      this._canUseRaf = canUseRaf();
       this._bindListeners();
     }
+    this._didRender = true;
   },
 
   didUpdateAttrs() {
     this._super(...arguments);
-    if (this.get('enabled') && this._getStickyWrapper()) {
+    if (this.get('enabled') && this._didRender) {
       this._bindListeners();
     } else {
       this._didEnter();
       this._unbindListeners();
     }
-  },
-
-  _getStickyWrapper() {
-    return document.getElementById(`sticky-wrapper-${this.get('uniqueId')}`);
-  },
-
-  _getStickyContentWrapper() {
-    return document.getElementById(`sticky-content-wrapper-${this.get('uniqueId')}`);
-  },
-
-  _getContext() {
-    return this._getStickyWrapper().parentNode || window;
   },
 
   willDestroyElement() {
@@ -69,37 +54,52 @@ export default Mixin.create({
       return;
     }
 
-    this._unbindListeners();
-  },
-
-  _bindListeners() {
-    let element = this._getStickyWrapper();
-    let contextEl = this._getContext();
-    let elementId = this.get('uniqueId');
-
-    if (canUseRaf()) {
-      this._rafLoop(element, contextEl);
-    } else {
-      events.forEach((event) => {
-        $(contextEl).on(`${event}.${elementId}`, () => {
-          this._updateInViewport(element, contextEl);
-        });
-      });
+    if (this.get('enabled') && this._didRender) {
+      this._unbindListeners();
     }
   },
 
-  _rafLoop(element, contextEl) {
-    let elementId = this.get('uniqueId');
-    this._updateInViewport(element, contextEl);
-    rAFIDS[elementId] = window.requestAnimationFrame(run.bind(this, this._rafLoop, element, contextEl));
+  _setElements() {
+    this._wrapper = document.getElementById(`sticky-wrapper-${this.get('uniqueId')}`);
+    this._contentWrapper = document.getElementById(`sticky-content-wrapper-${this.get('uniqueId')}`);
+    this._heightWrapper = document.getElementById(`sticky-height-wrapper-${this.get('uniqueId')}`);
+    this._contextEl = this._wrapper.parentNode || window;
   },
 
-  _updateInViewport(element, contextEl) {
-    let boundingClientRect = element.getBoundingClientRect();
+  _bindListeners() {
+    let element = this._wrapper;
+    let contextEl = this._contextEl;
+    let elementId = this.get('uniqueId');
 
-    let newInViewport = isInViewport(boundingClientRect, $(contextEl).innerHeight(), $(contextEl).innerWidth(), this.get('offsets'));
+    events.forEach((event) => {
+      $(contextEl).on(`${event}.${elementId}`, () => {
+        this._onScroll(contextEl, element);
+      });
+    });
+  },
+
+  _onScroll(contextEl, element) {
+    this._lastScrollY = contextEl.scrollTop;
+
+    // Prevent multiple rAF callbacks.
+    if (this._scheduledAnimationFrame) {
+      return;
+    }
+
+    this._scheduledAnimationFrame = true;
+    raf(() => {
+      this._updateInViewport(contextEl, element);
+      this._scheduledAnimationFrame = false;
+    });
+  },
+
+  _updateInViewport(contextEl, element) {
+    let boundingClientRect = element.getBoundingClientRect();
+    let topOffset = this.get('offsets.top') || 0;
     let inViewport = this.get('inViewport');
-    let notOnTop = boundingClientRect.top > contextEl.scrollTop;
+
+    let notOnTop = boundingClientRect.top - topOffset > 0;
+    let newInViewport = isInViewport(boundingClientRect, $(contextEl).innerHeight(), $(contextEl).innerWidth(), this.get('offsets'));
 
     if (!inViewport && newInViewport) {
       this._didEnter();
@@ -109,38 +109,50 @@ export default Mixin.create({
       this._didLeave();
     }
 
-    this._updateTranslate(element, contextEl);
-
     this.set('inViewport', newInViewport);
-  },
-
-  _updateTranslate(element, contextEl) {
-    this.set('scrollTop', contextEl.scrollTop);
   },
 
   _unbindListeners() {
     let elementId = this.get('uniqueId');
-    let contextEl = this._getContext();
+    let contextEl = this._contextEl;
 
-    if (canUseRaf()) {
-      window.cancelAnimationFrame(rAFIDS[elementId]);
-      delete rAFIDS[elementId];
-    } else {
-      events.forEach((event) => {
-        $(contextEl).off(`${event}.${elementId}`);
-      });
-    }
+    events.forEach((event) => {
+      $(contextEl).off(`${event}.${elementId}`);
+    });
+  },
+
+  _toggleStickyClass(toggle) {
+    let contentWrapper = this._contentWrapper;
+    let contextEl = this._contextEl;
+    let stickyClass = this.get('stickyClass');
+    $(contentWrapper).toggleClass(stickyClass, toggle);
+
+    contentWrapper.style.boxSizing = 'border-box';
+
+    let offsetTop = this.get('offsets.top') || 0;
+    contentWrapper.style.top = toggle ? `${offsetTop}px` : '';
+
+    let contextWidth = $(contextEl).outerWidth(true);
+    contentWrapper.style.width = toggle ? `${contextWidth - SCROLLBAR_WIDTH}px` : '';
+
+    this.set('isSticky', toggle);
+  },
+
+  _setWrapperHeight(height) {
+    let heightWrapper = this._heightWrapper;
+    heightWrapper.style.height = height ? `${height}px` : '';
   },
 
   _didEnter() {
-    this.set('isSticky', false);
-    this.set('wrapperHeight', null);
+    this._toggleStickyClass(false);
+    this._setWrapperHeight(false);
   },
 
   _didLeave() {
-    let contentWrapper = this._getStickyContentWrapper();
+    let contentWrapper = this._contentWrapper;
     let wrapperHeight = $(contentWrapper).outerHeight(true);
-    this.set('isSticky', true);
-    this.set('wrapperHeight', wrapperHeight);
+
+    this._setWrapperHeight(wrapperHeight);
+    this._toggleStickyClass(true);
   }
 });
