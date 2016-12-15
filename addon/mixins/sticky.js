@@ -40,7 +40,11 @@ export default Mixin.create({
 
   didUpdateAttrs() {
     this._super(...arguments);
-    if (this.get('enabled') && this._didRender) {
+    if (!this._didRender) {
+      return;
+    }
+    
+    if (this.get('enabled')) {
       this._setElements();
       this._canUseRaf = canUseRaf();
       this._bindListeners();
