@@ -41,6 +41,8 @@ export default Mixin.create({
   didUpdateAttrs() {
     this._super(...arguments);
     if (this.get('enabled') && this._didRender) {
+      this._setElements();
+      this._canUseRaf = canUseRaf();
       this._bindListeners();
     } else {
       this._didEnter();
