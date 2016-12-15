@@ -15,8 +15,9 @@ export default Mixin.create({
 
   translateStyle: computed('isSticky', 'scrollTop', function() {
     let scrollTop = this.get('scrollTop');
+    let offsetTop = this.get('offsets.top') || 0;
     let isSticky = this.get('isSticky');
-    return isSticky && !!scrollTop ? htmlSafe(`transform: translateY(${scrollTop}px);`) : null;
+    return isSticky && !!scrollTop ? htmlSafe(`transform: translateY(${scrollTop + offsetTop}px);`) : null;
   }),
 
   wrapperHeightStyle: computed('wrapperHeight', function() {
@@ -96,7 +97,7 @@ export default Mixin.create({
   _updateInViewport(element, contextEl) {
     let boundingClientRect = element.getBoundingClientRect();
 
-    let newInViewport = isInViewport(boundingClientRect, $(contextEl).innerHeight(), $(contextEl).innerWidth(), this.get('viewportTolerance'));
+    let newInViewport = isInViewport(boundingClientRect, $(contextEl).innerHeight(), $(contextEl).innerWidth(), this.get('offsets'));
     let inViewport = this.get('inViewport');
     let notOnTop = boundingClientRect.top > contextEl.scrollTop;
 
