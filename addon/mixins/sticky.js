@@ -34,7 +34,7 @@ export default Mixin.create({
     if (!canUseDOM) {
       return;
     }
-    
+
     if (this.get('enabled')) {
       this._bindListeners();
     }
@@ -98,10 +98,13 @@ export default Mixin.create({
 
     let newInViewport = isInViewport(boundingClientRect, $(contextEl).innerHeight(), $(contextEl).innerWidth(), this.get('viewportTolerance'));
     let inViewport = this.get('inViewport');
+    let notOnTop = boundingClientRect.top > contextEl.scrollTop;
 
     if (!inViewport && newInViewport) {
       this._didEnter();
-    } else if (inViewport && !newInViewport) {
+    } else if (inViewport && !newInViewport && !notOnTop) {
+      // if it is *not on top* and it is *on in viewport* anymore,
+      // we conclude that the element "bottomed out" (exited through the bottom)
       this._didLeave();
     }
 

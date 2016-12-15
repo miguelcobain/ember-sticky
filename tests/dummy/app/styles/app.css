@@ -12,28 +12,39 @@ body {
   right: 0;
   overflow-x: auto;
   background-color: grey;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.purple {
+  background-color: purple;
 }
 
 .header {
   height: 50px;
-  background-color: yellow;
   padding: 10px;
+  position: relative;
 }
 
 .secondary-header {
-  height: 50px;
-  background-color: red;
-  padding: 10px;
   z-index: 1;
-  position: relative;
 }
 
 .tertiary-header {
-  height: 50px;
-  background-color: green;
-  padding: 10px;
   z-index: 2;
-  position: relative;
 }
 
 .sticky {
@@ -41,9 +52,12 @@ body {
   left: 0;
   right: 0;
   top: 0;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)
 }
 
 .body {
   padding: 10px;
   height: 500px;
+  background-color: white;
+  flex: 1;
 }

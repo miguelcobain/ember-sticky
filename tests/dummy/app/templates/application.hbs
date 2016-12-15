@@ -1,9 +1,9 @@
 <div class="scrollable">
-	<div class="header">
+	<div class="header yellow">
   	I'm a normal header.
   </div>
 
-  {{#sticky-element enabled=secondaryEnabled class="secondary-header" as |isSticky|}}
+  {{#sticky-element enabled=secondaryEnabled class="header red" as |isSticky|}}
   	I am
     {{#if isSticky}}
     	sticky. Scroll up.
@@ -29,7 +29,7 @@
     An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
   </div>
 
-  {{#sticky-element enabled=tertiaryEnabled class="tertiary-header" as |isSticky|}}
+  {{#sticky-element enabled=tertiaryEnabled class="header green" as |isSticky|}}
     I am
     {{#if isSticky}}
       sticky. Scroll up.
@@ -55,7 +55,7 @@
     An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
   </div>
 
-  {{#sticky-element enabled=tertiaryEnabled class="tertiary-header" as |isSticky|}}
+  {{#sticky-element enabled=tertiaryEnabled class="header purple" as |isSticky|}}
     I am
     {{#if isSticky}}
       sticky. Scroll up.
