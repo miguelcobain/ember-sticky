@@ -30,22 +30,25 @@ export default Mixin.create({
       return;
     }
 
+    this._setElements();
+
     if (this.get('enabled')) {
-      this._setElements();
       this._canUseRaf = canUseRaf();
       this._bindListeners();
     }
+
     this._didRender = true;
   },
 
   didUpdateAttrs() {
     this._super(...arguments);
+
+    // only react to updates after render
     if (!this._didRender) {
       return;
     }
-    
+
     if (this.get('enabled')) {
-      this._setElements();
       this._canUseRaf = canUseRaf();
       this._bindListeners();
     } else {
