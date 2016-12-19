@@ -3,13 +3,15 @@
   	I'm a normal header.
   </div>
 
-  {{#sticky-element enabled=secondaryEnabled class="header red" as |isSticky|}}
-  	I am
-    {{#if isSticky}}
-    	sticky. Scroll up.
-    {{else}}
-    	not sticky. Scroll down.
-    {{/if}}
+  {{#sticky-element enabled=secondaryEnabled as |isSticky|}}
+		<div class="header red">
+	  	I am
+	    {{#if isSticky}}
+	    	sticky. Scroll up.
+	    {{else}}
+	    	not sticky. Scroll down.
+	    {{/if}}
+		</div>
   {{/sticky-element}}
 
   <div class="body">
