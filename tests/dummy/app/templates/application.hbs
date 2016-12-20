@@ -31,13 +31,15 @@
     An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
   </div>
 
-  {{#sticky-element enabled=tertiaryEnabled class="header green" offsets=(hash top=70) as |isSticky|}}
-    I am
-    {{#if isSticky}}
-      sticky. Scroll up.
-    {{else}}
-      not sticky. Scroll down.
-    {{/if}}
+  {{#sticky-element enabled=tertiaryEnabled offset=70 as |isSticky|}}
+		<div class="header green">
+	    I am
+	    {{#if isSticky}}
+	      sticky. Scroll up.
+	    {{else}}
+	      not sticky. Scroll down.
+	    {{/if}}
+		</div>
   {{/sticky-element}}
 
   <div class="body">
@@ -57,13 +59,15 @@
     An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
   </div>
 
-  {{#sticky-element enabled=tertiaryEnabled class="header purple" offsets=(hash top=140) as |isSticky|}}
-    I am
-    {{#if isSticky}}
-      sticky. Scroll up.
-    {{else}}
-      not sticky. Scroll down.
-    {{/if}}
+  {{#sticky-element enabled=tertiaryEnabled offset=140 as |isSticky|}}
+		<div class="header purple">
+			I am
+	    {{#if isSticky}}
+	      sticky. Scroll up.
+	    {{else}}
+	      not sticky. Scroll down.
+	    {{/if}}
+		</div>
   {{/sticky-element}}
 
   <div class="body">

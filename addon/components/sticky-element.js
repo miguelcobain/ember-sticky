@@ -6,10 +6,15 @@ const { Component, isNone } = Ember;
 export default Component.extend({
   layout,
 
-  stickyOptions: ['direction', 'stuckClass'],
+  stickyOptions: ['direction', 'stuckClass', 'offset'],
 
   didInsertElement() {
     this._super(...arguments);
+
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     this._sticky = new Waypoint.Sticky(this.buildOptions());
   },
 
@@ -25,7 +30,7 @@ export default Component.extend({
     options.context = this.element.parentNode;
     options.element = this.element.querySelector('.sticky-container');
     options.handler = (direction) => {
-      console.log('handler', direction);
+      this.set('isSticky', direction === 'down');
     };
 
     return options;

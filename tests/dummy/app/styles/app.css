@@ -34,24 +34,29 @@ body {
 }
 
 .header {
-  height: 70px;
+  height: 50px;
   padding: 10px;
   position: relative;
-}
-
-.secondary-header {
-  z-index: 1;
-}
-
-.tertiary-header {
-  z-index: 2;
 }
 
 .stuck {
   position: fixed;
   top: 0;
   width: 100%;
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)
+}
+
+.stuck .header {
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.stuck .header.green {
+  top: 70px;
+  z-index: 1;
+}
+
+.stuck .header.purple {
+  top: 140px;
+  z-index: 2;
 }
 
 .body {
