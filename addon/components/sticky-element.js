@@ -24,7 +24,7 @@ export default Component.extend({
     }
   },
 
-  didUpdateAttrs() {
+  didUpdateAttrs({ offset }) {
     this._super(...arguments);
 
     if (this.get('enabled')) {
@@ -32,10 +32,28 @@ export default Component.extend({
     } else {
       this.destroyWaypoints();
     }
+
+    if (offset) {
+      this.destroyWaypoints();
+      this.initWaypoints();
+    }
   },
 
   initWaypoints() {
     this._sticky = new Waypoint.Sticky(this.get('waypointsOptions'));
+
+    if (this.get('refreshOnMutations')) {
+      let mutObserver = new MutationObserver(this.didMutate.bind(this));
+      mutObserver.observe(this.element, {
+        subtree: true,
+        childList: true
+      });
+      this._mutObserver = mutObserver;
+    }
+  },
+
+  didMutate() {
+    Waypoint.refreshAll();
   },
 
   waypointsOptions: computed(function() {
@@ -57,12 +75,21 @@ export default Component.extend({
   waypointsHandler(direction) {
     let isSticky = direction === 'down';
     this.set('isSticky', isSticky);
+    this.setElementOffset(isSticky);
     this.setContainerWidth(isSticky);
+  },
+
+  setElementOffset(isSticky) {
+    let { element } = this.get('waypointsOptions');
+    let offset = this.get('offset');
+    element.style.top = isSticky && offset ? `${offset}px` : ''
   },
 
   setContainerWidth(isSticky) {
     let { element, context } = this.get('waypointsOptions');
-    element.style.width = isSticky ? `${$(context).width() - SCROLLBAR_WIDTH}px` : '';
+    let canScroll = context.scrollHeight > context.clientHeight;
+    let newWidth = canScroll ? $(context).width() - SCROLLBAR_WIDTH : $(context).width();
+    element.style.width = isSticky ? `${newWidth}px` : '';
   },
 
   willDestroyElement() {
@@ -71,6 +98,10 @@ export default Component.extend({
   },
 
   destroyWaypoints() {
+    if (this._mutObserver) {
+      this._mutObserver.disconnect();
+    }
+    this.waypointsHandler('up');
     if (this._sticky) {
       this._sticky.destroy();
     }

@@ -50,12 +50,10 @@ body {
 }
 
 .stuck .header.green {
-  top: 70px;
   z-index: 1;
 }
 
 .stuck .header.purple {
-  top: 140px;
   z-index: 2;
 }
 
