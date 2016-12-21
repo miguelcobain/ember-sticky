@@ -49,17 +49,16 @@ export default Component.extend({
 
     options.context = this.element.parentNode;
     options.element = this.element.querySelector('.sticky-container');
-    options.handler = (direction) => {
-      let isSticky = direction === 'down';
-      run.schedule('sync', () => {
-        this.set('isSticky', isSticky);
-      });
-
-      this.setContainerWidth(isSticky);
-    };
+    options.handler = run.bind(this, this.waypointsHandler);
 
     return options;
   }),
+
+  waypointsHandler(direction) {
+    let isSticky = direction === 'down';
+    this.set('isSticky', isSticky);
+    this.setContainerWidth(isSticky);
+  },
 
   setContainerWidth(isSticky) {
     let { element, context } = this.get('waypointsOptions');
