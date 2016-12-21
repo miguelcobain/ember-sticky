@@ -9,6 +9,7 @@ const SCROLLBAR_WIDTH = getScrollbarWidth();
 export default Component.extend({
   layout,
 
+  enabled: true,
   stickyOptions: ['direction', 'stuckClass', 'offset'],
 
   didInsertElement() {
