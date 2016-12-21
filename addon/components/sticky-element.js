@@ -10,6 +10,7 @@ export default Component.extend({
   layout,
 
   enabled: true,
+  refreshOnMutations: true,
   stickyOptions: ['direction', 'stuckClass', 'offset'],
 
   didInsertElement() {
@@ -82,7 +83,7 @@ export default Component.extend({
   setElementOffset(isSticky) {
     let { element } = this.get('waypointsOptions');
     let offset = this.get('offset');
-    element.style.top = isSticky && offset ? `${offset}px` : ''
+    element.style.top = isSticky && offset ? `${offset}px` : '';
   },
 
   setContainerWidth(isSticky) {
