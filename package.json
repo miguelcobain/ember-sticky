@@ -21,7 +21,7 @@
     "ember-cli-babel": "^5.1.7",
     "ember-cli-htmlbars": "^1.0.10",
     "ember-cli-node-assets": "^0.1.6",
-    "waypoints": "^4.0.1"
+    "scrollmonitor": "^1.2.2"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",

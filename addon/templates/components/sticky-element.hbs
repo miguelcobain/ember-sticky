@@ -1,3 +1,5 @@
-<div class="sticky-container">
-  {{yield isSticky}}
+<div class="height-wrapper" style={{if enabled heightStyle}}>
+  <div class="sticky-wrapper {{if isSticky stickyClass}}" style={{if enabled wrapperStyle}}>
+    {{yield isSticky enabled}}
+  </div>
 </div>

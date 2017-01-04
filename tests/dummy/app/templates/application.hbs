@@ -1,6 +1,6 @@
 <div class="scrollable">
 
-  {{#sticky-element enabled=secondaryEnabled as |isSticky|}}
+  {{#sticky-element enabled=secondaryEnabled as |isSticky enabled|}}
 		<div class="header red">
 	  	I am
 	    {{#if isSticky}}
@@ -8,6 +8,8 @@
 	    {{else}}
 	    	not sticky. Scroll down.
 	    {{/if}}
+
+      I am {{if enabled "enabled" "disabled"}}.
 		</div>
   {{/sticky-element}}
 
@@ -28,7 +30,7 @@
     An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
   </div>
 
-  {{#sticky-element enabled=tertiaryEnabled offset=70 as |isSticky|}}
+  {{#sticky-element enabled=tertiaryEnabled offset=70 as |isSticky enabled|}}
 		<div class="header green">
 	    I am
 	    {{#if isSticky}}
@@ -36,6 +38,7 @@
 	    {{else}}
 	      not sticky. Scroll down.
 	    {{/if}}
+      I am {{if enabled "enabled" "disabled"}}.
 		</div>
   {{/sticky-element}}
 
@@ -56,7 +59,7 @@
     An eius tacimates mediocrem vim, mel ut decore mediocritatem. Vix altera iriure at, ea stet scaevola complectitur sed. Ex mel viderer democritum efficiantur. Vim solum vocent gubergren an, mei at affert partiendo assueverit. No eum idque dolorem, ne posidonium adversarium qui.
   </div>
 
-  {{#sticky-element enabled=tertiaryEnabled offset=140 as |isSticky|}}
+  {{#sticky-element enabled=tertiaryEnabled offset=tertiaryOffset as |isSticky enabled|}}
 		<div class="header purple">
 			I am
 	    {{#if isSticky}}
@@ -64,6 +67,7 @@
 	    {{else}}
 	      not sticky. Scroll down.
 	    {{/if}}
+      I am {{if enabled "enabled" "disabled"}}.
 		</div>
   {{/sticky-element}}
 
@@ -71,6 +75,9 @@
     <p>
       <button onclick={{action "toggleSecondary"}}>Toggle secondary header stickyness</button>
       <button onclick={{action "toggleTertiary"}}>Toggle tertiary header stickyness</button>
+    </p>
+    <p>
+      Dynamic offset: {{input type="number" min=0 value=tertiaryOffset}}
     </p>
 
   	Lorem ipsum dolor sit amet, semper atomorum eum ex, vis mazim laoreet debitis in. In pri dico volutpat. Quem esse quas nec no, et nam nostro adolescens. Ut eam graeco volumus, at vim tale inani, no pri discere lobortis.

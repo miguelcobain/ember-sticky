@@ -1,110 +1,71 @@
 import Ember from 'ember';
 import layout from '../templates/components/sticky-element';
 import getScrollbarWidth from '../utils/scrollbar-width';
-const { Component, computed, isNone, run, $ } = Ember;
-/* global Waypoint */
+const { Component, computed, run, String: { htmlSafe } } = Ember;
+/* global scrollMonitor */
 
 const SCROLLBAR_WIDTH = getScrollbarWidth();
 
 export default Component.extend({
   layout,
 
+  classNames: ['sticky-wrapper'],
+
   enabled: true,
   refreshOnMutations: true,
-  stickyOptions: ['direction', 'stuckClass', 'offset'],
+  stickyClass: 'stuck',
+
+  heightStyle: computed('wrapperHeight', function() {
+    let wrapperHeight = this.get('wrapperHeight');
+    return wrapperHeight ? htmlSafe(`height: ${wrapperHeight}px;`) : null;
+  }),
+
+  wrapperStyle: computed('offset', 'containerWidth', function() {
+    let style = '';
+    let offset = this.get('offset');
+    style += offset ? `top: ${offset}px;` : '';
+    let containerWidth = this.get('containerWidth');
+    style += containerWidth ? `width: ${containerWidth}px;` : '';
+
+    return htmlSafe(style);
+  }),
+
+  isSticky: computed.and('shouldStick', 'enabled'),
 
   didInsertElement() {
     this._super(...arguments);
 
-    if (typeof document === 'undefined') {
-      return;
-    }
-
-    if (this.get('enabled')) {
-      this.initWaypoints();
-    }
-  },
-
-  didUpdateAttrs({ offset }) {
-    this._super(...arguments);
-
-    if (this.get('enabled')) {
-      this.initWaypoints();
-    } else {
-      this.destroyWaypoints();
-    }
-
-    if (offset) {
-      this.destroyWaypoints();
-      this.initWaypoints();
-    }
-  },
-
-  initWaypoints() {
-    this._sticky = new Waypoint.Sticky(this.get('waypointsOptions'));
-
-    if (this.get('refreshOnMutations')) {
-      let mutObserver = new MutationObserver(this.didMutate.bind(this));
-      mutObserver.observe(this.element, {
-        subtree: true,
-        childList: true
-      });
-      this._mutObserver = mutObserver;
-    }
-  },
-
-  didMutate() {
-    Waypoint.refreshAll();
-  },
-
-  waypointsOptions: computed(function() {
-    let options = this.getProperties(this.stickyOptions);
-
-    Object.keys(options).forEach((key) => {
-      if (isNone(options[key])) {
-        delete options[key];
-      }
-    });
-
-    options.context = this.element.parentNode;
-    options.element = this.element.querySelector('.sticky-container');
-    options.handler = run.bind(this, this.waypointsHandler);
-
-    return options;
-  }),
-
-  waypointsHandler(direction) {
-    let isSticky = direction === 'down';
-    this.set('isSticky', isSticky);
-    this.setElementOffset(isSticky);
-    this.setContainerWidth(isSticky);
-  },
-
-  setElementOffset(isSticky) {
-    let { element } = this.get('waypointsOptions');
-    let offset = this.get('offset');
-    element.style.top = isSticky && offset ? `${offset}px` : '';
-  },
-
-  setContainerWidth(isSticky) {
-    let { element, context } = this.get('waypointsOptions');
-    let canScroll = context.scrollHeight > context.clientHeight;
-    let newWidth = canScroll ? $(context).width() - SCROLLBAR_WIDTH : $(context).width();
-    element.style.width = isSticky ? `${newWidth}px` : '';
+    this.initScrollMonitor();
   },
 
   willDestroyElement() {
     this._super(...arguments);
-    this.destroyWaypoints();
+    this.watcher.destroy();
   },
 
-  destroyWaypoints() {
-    if (this._mutObserver) {
-      this._mutObserver.disconnect();
-    }
-    this.waypointsHandler('up');
-    if (this._sticky) {
-      this._sticky.destroy();
+  initScrollMonitor() {
+    let containerMonitor = scrollMonitor.createContainer(this.element.parentNode);
+    let elementWatcher = containerMonitor.create(this.element, { top: this.get('offset') || 0 });
+
+    elementWatcher.stateChange(run.bind(this, this.stateChange));
+
+    this.watcher = elementWatcher;
+  },
+
+  stateChange(event, { isAboveViewport, isFullyInViewport }) {
+    if (!isFullyInViewport && isAboveViewport) {
+      this.set('wrapperHeight', this.$('.sticky-wrapper').outerHeight(true));
+
+      let context = this.element.parentNode
+      let canScroll = context.scrollHeight > context.clientHeight;
+      let newWidth = canScroll ? $(context).width() - SCROLLBAR_WIDTH : $(context).width();
+      this.set('containerWidth', newWidth);
+
+      this.set('shouldStick', true);
+    } else {
+      this.set('wrapperHeight', null);
+      this.set('containerWidth', null);
+      this.set('shouldStick', false);
     }
   }
 });
