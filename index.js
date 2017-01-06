@@ -7,13 +7,6 @@ module.exports = {
   options: {
     nodeAssets: {
       scrollmonitor: function() {
-        var files = [];
-        var includeWaypoints = this.addonOptions.includeWaypoints;
-        if (includeWaypoints === undefined || includeWaypoints === true) {
-          files.push('jquery.waypoints.js')
-        }
-        files.push('shortcuts/sticky.js');
-
         return {
           import: [{
             path: 'scrollMonitor.js',
